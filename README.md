@@ -7,7 +7,7 @@
 
 This repository contains the code to train and evaluate the work presented in the article [Domain and View-point Agnostic Hand Action Recognition](https://arxiv.org/abs/2103.02303).
 
-![Motion representation model](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/TCN_pipeline.png)
+![Motion representation model](https://github.com/AlbertoSabater/Domain-and-View-point-Agnostic-Hand-Action-Recognition/blob/main/TCN_pipeline.png)
 
 
 ## Download pre-trained models
@@ -33,7 +33,7 @@ In SHREC-17 Dataset: `Wrist, thumb_first_joint, thumb_second_joint, thumb_tip, i
 
 The **7-joints minimal** skeleton representation proposed in the paper uses the skeleton joints indexed by `0,8,3,7,11,15,19`, which stands for `Wrist, middle_base, thumb_tip, index_tip, middle_tip, ring_tip, pinky_tip`.
 
-![Skeleton representations](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/minimal_hand_v2.png)
+![Skeleton representations](https://github.com/AlbertoSabater/Domain-and-View-point-Agnostic-Hand-Action-Recognition/blob/main/minimal_hand_v2.png)
 
 Original skeletons files can be transformed to the 20-joints format with the scripts for [SHREC17](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/dataset_scripts/common_pose/shrec17_to_common_pose.py) and [F-PHAB](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/dataset_scripts/common_pose/f-phab_to_common_pose.py), and stored under `./datasets/`. Minimal 7-joints format is later obtained with the `DataGenerator`.
 
