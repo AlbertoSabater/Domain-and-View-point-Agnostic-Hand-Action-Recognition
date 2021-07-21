@@ -24,7 +24,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 knn_neighbors = [1,3,5,7,9,11]
-aug_loop = [0,10,20,40]
+# aug_loop = [0,10,20,40]
+aug_loop = [0,40]
 num_augmentations = max(aug_loop)
 weights = 'distance'
 
