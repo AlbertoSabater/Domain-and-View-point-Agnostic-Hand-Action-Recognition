@@ -18,19 +18,13 @@ import sys
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-# from data_generator_hand_contrastive import DataGenerator_HandContrastive
 from data_generator import DataGenerator
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 
 knn_neighbors = [1,3,5,7,9,11]
-# knn_neighbors = [5]
 aug_loop = [0,10,20,40]
-# aug_loop = [0,40]
-# aug_loop = [0,40]
-# aug_loop = [0]
-# aug_loop = [40]
 num_augmentations = max(aug_loop)
 weights = 'distance'
 
@@ -90,8 +84,7 @@ def evaluate_folds(folds_data, embs, total_labels, num_augmentations=0, embs_aug
             idx = np.random.choice(np.arange(len(y_train)), crop_train, replace=False)
             X_train = X_train[idx]
             y_train = np.array(y_train)[idx]
-        # if num_fold == 0:
-        #     print('Training:', len(y_train), '|||', 'Testing:', len(y_test))
+
         res[num_fold] = {}
         knn = KNeighborsClassifier(n_neighbors=1, n_jobs=8, weights=weights).fit(X_train, y_train)
         for n in knn_neighbors:
@@ -119,7 +112,6 @@ def evaluate_folds(folds_data, embs, total_labels, num_augmentations=0, embs_aug
             print(' ** Classification time ** num_fold [{}] | k [{}] | X_test [{}] | time [{:.3f}s] | ms per sequence [{:.3f}]'.format(num_fold, n, 
                                                                        len(X_test), tf-t, (tf-t)*1000/len(X_test)))
 
-
     res = { n:np.mean([ res[num_fold][n] for num_fold in range(num_folds) ]) for n in knn_neighbors }
     
 
@@ -145,10 +137,9 @@ def load_fphab_data():
     
     
     # Load evaluation folds
-    folds_1_1 = pickle.load(open(os.path.join(annotations_store_folder, 'annotations_table_2_cross-action_folds_1:1_jn{}.pckl'.format(20)), 'rb'))
+    folds_1_1 = pickle.load(open(os.path.join(annotations_store_folder, 'annotations_table_2_cross-action_folds_1_1_jn{}.pckl'.format(20)), 'rb'))
     folds_base = pickle.load(open(os.path.join(annotations_store_folder, 'annotations_table_2_cross-action_folds_jn{}.pckl'.format(20)), 'rb'))
     folds_subject = pickle.load(open(os.path.join(annotations_store_folder, 'annotations_table_2_cross-person_folds_jn{}.pckl'.format(20)), 'rb'))
-    # print('* Folds loaded')
     return total_annotations, total_labels, folds_1_1, folds_base, folds_subject
 
 
@@ -188,17 +179,12 @@ def get_tcn_embeddings(model, action_sequences, action_sequences_augmented, retu
         # embs = np.array([ model.get_embedding(s[None]).numpy()[0] for s in action_sequences ])
         embs = [ model.get_embedding(s[None]) for s in action_sequences ]
     else: 
-        # embs = np.concatenate([ model.get_embedding(s).numpy() for s in np.array_split(action_sequences, max(1, len(action_sequences)//200)) ])
-        # embs = [ model.get_embedding(s) for s in np.array_split(action_sequences, max(1, len(action_sequences)//200)) ]
         embs = [ model.get_embedding(s) for s in np.array_split(action_sequences, max(1, len(action_sequences)//1)) ]
     print('* Embeddings calculated')
     if num_augmentations > 0:
         if return_sequences: 
-            # embs_aug = np.array([ [ model.get_embedding(s[None]).numpy()[0] for s in samples] for samples in action_sequences_augmented ])
             embs_aug = [ [ model.get_embedding(s[None]) for s in samples ] for samples in tqdm(action_sequences_augmented) ]
         else: 
-            # embs_aug = [ np.concatenate([ model.get_embedding(s).numpy() for s in np.array_split(samples, max(1, len(samples)//200)) ]) for samples in action_sequences_augmented ]
-            # embs_aug = [ [ model.get_embedding(s) for s in np.array_split(samples, max(1, len(samples)//200)) ] for samples in action_sequences_augmented ]
             embs_aug = [ [ model.get_embedding(s) for s in np.array_split(samples, max(1, len(samples)//1)) ] for samples in tqdm(action_sequences_augmented) ]
         print('* Augmented embeddings calculated')
     else: embs_aug = None
@@ -222,20 +208,15 @@ def get_tcn_embeddings(model, action_sequences, action_sequences_augmented, retu
 def evaluate_fphab(aug_loop, folds_base, folds_1_1, folds_subject, embs, embs_aug, total_labels, knn_neighbors):
     total_res = {}
     for n_aug in aug_loop:
-        # print('***', n_aug, '***')
         total_res[n_aug] = {}
         print(n_aug, '1:3')
         total_res[n_aug]['1:3'] = evaluate_folds(folds_base, embs, total_labels, num_augmentations=n_aug, embs_aug=embs_aug, leave_one_out=False)
-        # print(' ** 1:3 Evaluation:', [ '{}: {:.3f}'.format(n, total_res[n_aug]['1:3'][n]) for n in knn_neighbors ])
         print(n_aug, '1:1')
         total_res[n_aug]['1:1'] = evaluate_folds(folds_1_1, embs, total_labels, num_augmentations=n_aug, embs_aug=embs_aug, leave_one_out=False, evaluate_all_folds=False)
-        # print(' ** 1:1 Evaluation:', [ '{}: {:.3f}'.format(n, total_res[n_aug]['1:1'][n]) for n in knn_neighbors ])
         print(n_aug, '3:1')
         total_res[n_aug]['3:1'] = evaluate_folds(folds_base, embs, total_labels, num_augmentations=n_aug, embs_aug=embs_aug, leave_one_out=True)
-        # print(' ** 3:1 Evaluation:', [ '{}: {:.3f}'.format(n, total_res[n_aug]['3:1'][n]) for n in knn_neighbors ])
         print(n_aug, 'cross_sub')
         total_res[n_aug]['cross_sub'] = evaluate_folds(folds_subject, embs, total_labels, num_augmentations=n_aug, embs_aug=embs_aug, leave_one_out=True)
-        # print(' ** cross_subject Evaluation:', [ '{}: {:.3f}'.format(n, total_res[n_aug]['cross_sub'][n]) for n in knn_neighbors ])
 
     return total_res
 
@@ -256,7 +237,6 @@ def print_results(dataset_name, total_res, knn_neighbors, aug_loop, frame=True):
 # =============================================================================
 
 def load_shrec_data():
-    # base_path = '/home/asabater/projects_lisbon/core/'
     base_path = './'
     shrec_train_anns = './dataset_scripts/common_pose/annotations/SHREC2017/annotations_train_{}_jn{}.txt'.format('14', 20)
     shrec_val_anns = './dataset_scripts/common_pose/annotations/SHREC2017/annotations_val_{}_jn{}.txt'.format('14', 20)
@@ -371,14 +351,6 @@ if __name__ == '__main__':
     parser.add_argument('--eval_msra', action='store_true', help='evaluate on MSRA dataset')
     args = parser.parse_args()
 
-
-    # Evaluation WITHOUT summarization
-    # loss_name, path_model = 'mixknn_train5_val1', '/mnt/hdd/ml_results/core/SHREC2017_28_jn20_tcn_contr_common_minimal_v5/0116_0911_model_37'
-    
-    # Evaluation WITH summarization
-    # loss_name, path_model = 'mixknn_best', '/mnt/hdd/ml_results/core/SHREC2017_28_jn20_tcn_att_common_minimal_v1_256/0126_0723_model_119/'
-   
-    
     model, model_params = prediction_utils.load_model(args.path_model, False, loss_name = args.loss_name)
     model_params['use_rotations'] = None
     
