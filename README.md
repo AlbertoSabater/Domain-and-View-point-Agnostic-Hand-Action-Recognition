@@ -9,8 +9,16 @@ This repository contains the code to train and evaluate the work presented in th
 
 ![Motion representation model](https://github.com/AlbertoSabater/Domain-and-View-point-Agnostic-Hand-Action-Recognition/blob/main/TCN_pipeline.png)
 
+```
+@inproceedings{sabater2021domain,
+  title={Domain and View-point Agnostic Hand Action Recognition},
+  author={Sabater, Alberto and Alonso, I{\~n}igo and Montesano, Luis and Murillo, Ana C},
+  booktitle={2021 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year={2021},
+}
+```
 
-## Download pre-trained models
+## Pre-trained models
 
 Download the desired models used in the paper and store them under `./pretrained_models/`.
 
@@ -37,7 +45,7 @@ The **7-joints minimal** skeleton representation proposed in the paper uses the 
 
 Original skeletons files can be transformed to the 20-joints format with the scripts for [SHREC17](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/dataset_scripts/common_pose/shrec17_to_common_pose.py) and [F-PHAB](https://github.com/AlbertoSabater/Domain-View-point-Agnostic-Hand-Action-Recognition/blob/main/dataset_scripts/common_pose/f-phab_to_common_pose.py), and stored under `./datasets/`. Minimal 7-joints format is later obtained with the `DataGenerator`.
 
-F-PHAB data splits used for the evaluation are located under `./dataset_scripts/F_PHAB/paper_tables_annotations/`.
+**F-PHAB data splits** used for the evaluation are located under `./dataset_scripts/F_PHAB/paper_tables_annotations/`.
 
 
 ## Python dependencies
@@ -53,9 +61,9 @@ Project tested with the following dependencies:
  * pandas 1.0.3
 
 
-## Evaluate cross-domain action recognition
+## Cross-domain action recognition evaluation
 
-Execute the file `action_recognition_evaluation.py` to perform the cross-domain evaluation reported in the paper. The scripts loads skeleton actions sequences, augments them, generates sequence embeddings and performs a KNN classification. Final results show the accuracy calculated both with and without reference action data augmentation. Use the following flags to evaluate different datasets. `--eval_fphab`, `--eval_msra`
+Execute the file `action_recognition_evaluation.py` to perform the cross-domain evaluation reported in the paper. The script loads skeleton action sequences, augments them, generates sequence embeddings and performs the KNN classification. Final results show the accuracy calculated both with and without motion reference set augmentation. Use the following flags to evaluate different datasets. `--eval_fphab`, `--eval_msra`
 
 To reproduce the results given in the Table III from the paper, download the cross-domain models and execute the following commands:
 
