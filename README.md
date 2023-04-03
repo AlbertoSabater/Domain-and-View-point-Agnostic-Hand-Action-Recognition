@@ -4,6 +4,7 @@
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/domain-and-view-point-agnostic-hand-action/skeleton-based-action-recognition-on-shrec)](https://paperswithcode.com/sota/skeleton-based-action-recognition-on-shrec?p=domain-and-view-point-agnostic-hand-action)
 
+[[Paper](https://arxiv.org/abs/2103.02303)] [[Supplementary video](https://drive.google.com/file/d/11PCKkrdj2bRDRepeZGu3ke5I3iALaotH/view?usp=sharing)]
 
 This repository contains the code to train and evaluate the work presented in the article [Domain and View-point Agnostic Hand Action Recognition](https://arxiv.org/abs/2103.02303).
 
